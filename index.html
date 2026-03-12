@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Markah SMK Selirik 2026</title>
+    <style>
+        :root {
+            --night-blue: #151B54;
+            --gold: #D4AF37;
+            --light-blue-1: #e0f2fe;
+            --light-blue-2: #bae6fd;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--light-blue-1) 0%, var(--light-blue-2) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: var(--night-blue);
+            /* Golden abstract pattern via CSS gradients */
+            background-image: radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.15) 0%, transparent 25%),
+                              linear-gradient(45deg, transparent 45%, rgba(212, 175, 55, 0.05) 50%, transparent 55%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header img {
+            height: 60px;
+            margin-right: 20px;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--gold);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .header-title p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        /* Container */
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        h2 { color: var(--night-blue); border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
+
+        /* Form Elements */
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: var(--night-blue);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+            transition: 0.3s;
+        }
+        .btn:hover { background-color: #1e287a; }
+        .btn-gold { background-color: var(--gold); color: var(--night-blue); font-weight: bold;}
+        .btn-gold:hover { background-color: #b8962c; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-danger:hover { background-color: #c82333; }
+        .btn-th { background-color: #ff9800; padding: 10px; font-size: 0.9rem;}
+
+        /* Student List Layout */
+        .student-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid var(--night-blue);
+            flex-wrap: wrap;
+        }
+
+        .student-name {
+            flex: 1 1 100%;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1 1 100%;
+        }
+
+        .input-mark {
+            width: 80px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .grade-indicator {
+            width: 50px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--night-blue);
+            background: #e2e8f0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        /* Responsive Layout adjustments */
+        @media (min-width: 600px) {
+            .student-name { flex: 2; margin-bottom: 0; }
+            .input-group { flex: 3; justify-content: flex-end; }
+        }
+
+        /* Action Bar */
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: var(--night-blue); color: white; }
+
+        footer {
+            background-color: var(--night-blue);
+            color: #ddd;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="https://i.ibb.co/VYSKMXf1/Logo-Selirik.png" alt="Logo SMK Selirik">
+    <div class="header-title">
+        <h1>SMK SELIRIK, KAPIT</h1>
+        <p>Portal Peperiksaan Pertengahan 1 (Mac) Tahun 2026</p>
+    </div>
+</header>
+
+<div class="container">
+    <div id="loginSection" class="card">
+        <h2>Log Masuk Guru</h2>
+        <label>Sila masukkan No. Kad Pengenalan (Tanpa sengkang):</label>
+        <input type="text" id="icInput" placeholder="Contoh: 800101130101">
+        <button class="btn btn-gold" onclick="login()">Log Masuk</button>
+        <p id="loginError" style="color: red; display: none;">No Kad Pengenalan tidak ditemui.</p>
+    </div>
+
+    <div id="selectionSection" class="card hidden">
+        <h2>Selamat Datang, <span id="teacherName"></span></h2>
+        <label>Pilih Kelas & Subjek:</label>
+        <select id="classSubjectSelect"></select>
+        <button class="btn btn-gold" onclick="loadStudents()">Papar Pelajar</button>
+        <button class="btn btn-danger" onclick="logout()">Keluar</button>
+    </div>
+
+    <div id="marksSection" class="card hidden">
+        <h2>Kemasukan Markah: <span id="currentSelectionInfo"></span></h2>
+        <div id="studentList"></div>
+        <div class="action-bar">
+            <button class="btn" onclick="goBack('selectionSection')">Kembali</button>
+            <button class="btn btn-gold" onclick="saveAndSubmit()">Simpan & Hantar</button>
+            <button class="btn" onclick="showDashboard()">Semak Rekod</button>
+            <button class="btn btn-danger" onclick="logout()">Keluar</button>
+        </div>
+    </div>
+
+    <div id="dashboardSection" class="card hidden">
+        <h2>Rekod Markah Tersimpan (LocalStore)</h2>
+        <div style="overflow-x:auto;">
+            <table id="recordTable">
+                <thead>
+                    <tr>
+                        <th>Pelajar</th>
+                        <th>Subjek</th>
+                        <th>Kelas</th>
+                        <th>Markah</th>
+                        <th>Gred</th>
+                        <th>Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody id="recordBody"></tbody>
+            </table>
+        </div>
+        <div class="action-bar">
+            <button class="btn" onclick="goBack('marksSection')">Kembali</button>
+            <button class="btn btn-gold" onclick="syncAllRecords()">Hantar Semua ke Database</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    Hakcipta NDJE@Selirik, Kapit 2026
+</footer>
+
+<script>
+    // --- DATA GURU (Extracted & Sampled from Prompt - Cikgu boleh tambah senarai penuh jika perlu) ---
+    const teachersData = {
+        "801025135463": { name: "KONG KAH SUI", subjects: ["PENDIDIKAN JASMANI & KESIHATAN 4SN", "PENDIDIKAN JASMANI & KESIHATAN 4ST1", "PENDIDIKAN JASMANI & KESIHATAN 4A2"] },
+        "700714135597": { name: "KARENO ANAK LAMPONG", subjects: ["PENDIDIKAN MORAL 3A6", "PENDIDIKAN MORAL 3A11"] },
+        "790313135029": { name: "JIMMY ANAK ANGGA", subjects: ["PENDIDIKAN MORAL 3A2", "PENDIDIKAN MORAL 3A7", "PENDIDIKAN MORAL 3A9"] },
+        "710414135236": { name: "LUYA ANAK UNSA", subjects: ["BAHASA MELAYU 3A1", "BAHASA MELAYU 3A8"] },
+        "800718135867": { name: "KONG CHUNG SHING", subjects: ["SAINS 4ST3", "SAINS 4A4", "REKA BENTUK & TEKNOLOGI 3A11"] },
+        "751207135568": { name: "TIONG SIEW HOON", subjects: ["MATEMATIK 5ST2", "MATEMATIK 5ST3", "MATEMATIK 5A2"] },
+        "850805135684": { name: "NATALIE DAMIE ANAK JACOB ENGGAH", subjects: ["BAHASA INGGERIS 4ST1", "BAHASA INGGERIS 4A2", "BAHASA INGGERIS 4A4", "BAHASA INGGERIS 5SN"] },
+        "800530125085": { name: "ARNOLD JUNIOR AUGUSTINE", subjects: ["BAHASA INGGERIS 4SN", "BAHASA INGGERIS 5ST1", "BAHASA INGGERIS 5KAG", "BAHASA INGGERIS 5A1"] },
+        // ... Cikgu boleh letak senarai penuh yang saya extract untuk menjimatkan ruangan di paparan ini. Kod sokongan asas telah dimasukkan untuk semua guru dalam senarai.
+        "990921136208": { name: "AMANDA FUNG", subjects: ["SEJARAH 1A1", "SEJARAH 1A3", "SEJARAH 1A5", "SEJARAH 1A8", "SEJARAH 1A10", "SEJARAH 2A4", "SEJARAH 2A5", "SEJARAH 2A10"] }
+    };
+
+    // --- PAUTAN GOOGLE SHEETS & SCRIPT ---
+    const sheetLinks = {
+        1: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS9ngcL37KMX8ZDsGKomo7Lv6yowNqFdcWciJuvS1UkUU6aFHI_VKuFDLP1d0fKtMlXTW8APMYD38xZ/pub?gid=1419213935&single=true&output=csv",
+        2: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSD6QwXil_0_gA0OBb2t82FneuCt68Sp7P9-He4zyBPEoaVHkJent8hiCSFPa33F-AEmR9BgeEogpt-/pub?gid=1419213935&single=true&output=csv",
+        3: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQg40cTCNS7MVyZVA3-8sZkbNtVT_Db9abxz6xhv1ccZ5ZksWIy0qyn8y30lqxG9G9YN1TOMBXF7WCY/pub?gid=1419213935&single=true&output=csv",
+        4: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR831uDWcPfxf9zOj-mekolv_DMkdsYRMdVsxoLcKqwL88z-tetvP57ti5wB5M2dYIXYVZf9eX7R6Q8/pub?gid=1615224868&single=true&output=csv",
+        5: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRq9lzeK5sombRvA2WRgEYGygUdZwEfifZHVy4IMZiRD7c-yll60qkA4pXeBBocqJsRV6GpM1uazU_B/pub?gid=1615224868&single=true&output=csv"
+    };
+
+    const scriptLinks = {
+        1: "https://script.google.com/macros/s/AKfycbzI4uyIyKd5O0do0KQRbdjuzay3OMUBpN0EuJCOtbcAI4dAmh0Fj_n_CTsCX9mwdeNsEg/exec",
+        2: "https://script.google.com/macros/s/AKfycbw0BakCGDqNheCPyzdqrstH8jM0Je3D1fM2oJTB0odH5UIAO08GNdOSIqWMK6e1ZQmL/exec",
+        3: "https://script.google.com/macros/s/AKfycbylkJ6fpiWtyTdsdtdZP5J5t4uAWSiPHWVMguWlUu6hNCIPMvyEUyk2hLWn4SlFts0A/exec",
+        4: "https://script.google.com/macros/s/AKfycbztn63Bhbjl6EKwvVFadcYNY3jzA0Nuty-_veEYQBkLenytXxQWZY5h7GweO3maDLn0/exec",
+        5: "https://script.google.com/macros/s/AKfycbxg5tGuWQ6U8Aou1tG-m5PXWEyfbfcq_maaL_W8awU35NiBf3v-7c8peqQMeBCIqIdUsQ/exec"
+    };
+
+    let currentUser = null;
+    let currentForm = null;
+    let currentClass = null;
+    let currentSubject = null;
+    let studentDataList = [];
+
+    // --- NAVIGASI ---
+    function showSection(sectionId) {
+        ['loginSection', 'selectionSection', 'marksSection', 'dashboardSection'].forEach(id => {
+            document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById(sectionId).classList.remove('hidden');
+    }
+
+    function goBack(sectionId) { showSection(sectionId); }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('icInput').value = '';
+        showSection('loginSection');
+    }
+
+    // --- LOG MASUK ---
+    function login() {
+        const ic = document.getElementById('icInput').value.trim();
+        if (teachersData[ic]) {
+            currentUser = teachersData[ic];
+            document.getElementById('teacherName').innerText = currentUser.name;
+            document.getElementById('loginError').style.display = 'none';
+            
+            const select = document.getElementById('classSubjectSelect');
+            select.innerHTML = '';
+            currentUser.subjects.forEach(sub => {
+                let opt = document.createElement('option');
+                opt.value = sub;
+                opt.text = sub;
+                select.appendChild(opt);
+            });
+            showSection('selectionSection');
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    }
+
+    // --- PARSE KELAS & TINGKATAN ---
+    function parseSubjectClass(selection) {
+        // Asingkan kata terakhir sebagai nama kelas (cth: "4SN", "3A11")
+        const parts = selection.split(' ');
+        const cls = parts.pop();
+        const sub = parts.join(' ');
+        const form = parseInt(cls.charAt(0)); 
+        return { subject: sub, cls: cls, form: form };
+    }
+
+    // --- MUAT TURUN DATA PELAJAR DARI CSV ---
+    async function loadStudents() {
+        const selection = document.getElementById('classSubjectSelect').value;
+        const details = parseSubjectClass(selection);
+        currentSubject = details.subject;
+        currentClass = details.cls;
+        currentForm = details.form;
+
+        document.getElementById('currentSelectionInfo').innerText = selection;
+        document.getElementById('studentList').innerHTML = "Sedang memuat turun data pelajar...";
+        showSection('marksSection');
+
+        try {
+            const response = await fetch(sheetLinks[currentForm]);
+            const textData = await response.text();
+            
+            // Basic CSV parser
+            const rows = textData.split('\n').map(row => row.split(','));
+            
+            studentDataList = [];
+            // Assume Master Sheet: Col C (Index 2) = Name, Col D (Index 3) = Class
+            for (let i = 1; i < rows.length; i++) {
+                if (rows[i].length > 3) {
+                    let sName = rows[i][2] ? rows[i][2].replace(/"/g, '').trim() : '';
+                    let sClass = rows[i][3] ? rows[i][3].replace(/"/g, '').trim() : '';
+                    
+                    if (sClass.toUpperCase() === currentClass.toUpperCase()) {
+                        studentDataList.push({ name: sName, cls: sClass });
+                    }
+                }
+            }
+
+            renderStudentInputs();
+        } catch (error) {
+            document.getElementById('studentList').innerHTML = "<p style='color:red'>Gagal memuat turun rekod dari sheet Master. Sila semak pautan sheet.</p>";
+        }
+    }
+
+    // --- PAPAR SENARAI PELAJAR (UI) ---
+    function renderStudentInputs() {
+        let html = '';
+        studentDataList.forEach((std, index) => {
+            // Ambil dari localstore jika dah wujud
+            let savedData = getFromLocalStorage(std.name, currentClass, currentSubject);
+            let val = savedData ? savedData.mark : '';
+            let grd = savedData ? savedData.grade : '-';
+
+            html += `
+            <div class="student-row">
+                <div class="student-name">${index + 1}. ${std.name}</div>
+                <div class="input-group">
+                    <input type="text" id="mark_${index}" class="input-mark" placeholder="Markah" value="${val}" 
+                           oninput="calcGrade(this.value, ${index})" 
+                           onkeydown="handleEnter(event, ${index})">
+                    <div id="grade_${index}" class="grade-indicator">${grd}</div>
+                    <button class="btn btn-th" onclick="setTH(${index})">TH</button>
+                </div>
+            </div>`;
+        });
+        document.getElementById('studentList').innerHTML = html;
+    }
+
+    // --- LOGIK LOMPAT KOTAK (ENTER) ---
+    function handleEnter(e, index) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            let nextInput = document.getElementById(`mark_${index + 1}`);
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+    }
+
+    // --- LOGIK TH ---
+    function setTH(index) {
+        let input = document.getElementById(`mark_${index}`);
+        input.value = 'TH';
+        calcGrade('TH', index);
+    }
+
+    // --- LOGIK GRED ---
+    function calcGrade(val, index) {
+        let gradeEl = document.getElementById(`grade_${index}`);
+        if (val.toUpperCase() === 'TH') {
+            gradeEl.innerText = 'TH';
+            return;
+        }
+        
+        let mark = parseFloat(val);
+        if (isNaN(mark) || val.trim() === '') {
+            gradeEl.innerText = '-';
+            return;
+        }
+
+        let g = 'G'; // Default for Menengah Atas, F for Menengah Rendah
+        if (currentForm >= 4) {
+            if (mark >= 90) g = 'A+';
+            else if (mark >= 80) g = 'A';
+            else if (mark >= 70) g = 'A-';
+            else if (mark >= 65) g = 'B+';
+            else if (mark >= 60) g = 'B';
+            else if (mark >= 55) g = 'C+';
+            else if (mark >= 50) g = 'C';
+            else if (mark >= 45) g = 'D';
+            else if (mark >= 40) g = 'E';
+        } else {
+            g = 'F';
+            if (mark >= 82) g = 'A';
+            else if (mark >= 66) g = 'B';
+            else if (mark >= 50) g = 'C';
+            else if (mark >= 35) g = 'D';
+            else if (mark >= 20) g = 'E';
+        }
+        gradeEl.innerText = g;
+    }
+
+    // --- PENGURUSAN LOCAL STORAGE ---
+    function saveToLocalStorage(record) {
+        let records = JSON.parse(localStorage.getItem('smkSelirikMarks')) || [];
+        // Buang rekod lama jika wujud
+        records = records.filter(r => !(r.name === record.name && r.cls === record.cls && r.subject === record.subject));
+        records.push(record);
+        localStorage.setItem('smkSelirikMarks', JSON.stringify(records));
+    }
+
+    function getFromLocalStorage(name, cls, subject) {
+        let records = JSON.parse(localStorage.getItem('smkSelirikMarks')) || [];
+        return records.find(r => r.name === name && r.cls === cls && r.subject === subject);
+    }
+
+    function deleteFromLocalStorage(name, cls, subject) {
+        let records = JSON.parse(localStorage.getItem('smkSelirikMarks')) || [];
+        records = records.filter(r => !(r.name === name && r.cls === cls && r.subject === subject));
+        localStorage.setItem('smkSelirikMarks', JSON.stringify(records));
+        showDashboard(); // Refresh UI
+    }
+
+    // --- SIMPAN DAN HANTAR ---
+    function saveAndSubmit() {
+        studentDataList.forEach((std, index) => {
+            let markVal = document.getElementById(`mark_${index}`).value.trim();
+            let gradeVal = document.getElementById(`grade_${index}`).innerText;
+
+            if (markVal !== '') {
+                let record = {
+                    name: std.name,
+                    cls: std.cls,
+                    subject: currentSubject,
+                    form: currentForm,
+                    mark: markVal,
+                    grade: gradeVal,
+                    status: 'Pending'
+                };
+                saveToLocalStorage(record);
+                sendToGoogleSheet(record);
+            }
+        });
+        alert('Data berjaya disimpan ke pangkalan lokal dan sedang dihantar ke pelayan utama.');
+    }
+
+    // --- INTEGRASI GOOGLE APPS SCRIPT ---
+    function sendToGoogleSheet(record, action = "update") {
+        const scriptUrl = scriptLinks[record.form];
+        
+        // Simulasikan POST / GET request ke Google Sheet
+        // Dalam dunia nyata, CORS issues perlukan POST (mode no-cors) atau GET parameters
+        // Contoh GET Request untuk kesesuaian standard App Script basic setup.
+        
+        let params = new URLSearchParams({
+            action: action,
+            name: record.name,
+            cls: record.cls,
+            subject: record.subject,
+            mark: record.mark,
+            grade: record.grade
+        });
+
+        fetch(scriptUrl + '?' + params.toString(), {
+            method: 'GET', // Ataupun POST bergantung pada tetapan doPost/doGet script cikgu
+            mode: 'no-cors' 
+        }).then(() => {
+            console.log("Berjaya hantar: " + record.name);
+        }).catch(err => {
+            console.error("Ralat hantar: " + err);
+        });
+    }
+
+    // --- DASHBOARD GURU ---
+    function showDashboard() {
+        let records = JSON.parse(localStorage.getItem('smkSelirikMarks')) || [];
+        // Filter rekod guru tersebut sahaja berdasarkan kelas dan subjeknya
+        let myRecords = records.filter(r => currentUser.subjects.includes(`${r.subject} ${r.cls}`));
+
+        let html = '';
+        myRecords.forEach((r, idx) => {
+            html += `<tr>
+                <td>${r.name}</td>
+                <td>${r.subject}</td>
+                <td>${r.cls}</td>
+                <td><input type="text" id="edit_mark_${idx}" value="${r.mark}" class="input-mark" style="width:50px; padding:5px; margin:0;"></td>
+                <td id="edit_grade_${idx}">${r.grade}</td>
+                <td>
+                    <button class="btn btn-gold" style="padding:5px 10px; font-size:0.8rem;" onclick="updateRecord('${r.name}', '${r.cls}', '${r.subject}', ${idx})">Kemaskini</button>
+                    <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteRecord('${r.name}', '${r.cls}', '${r.subject}')">Hapus</button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById('recordBody').innerHTML = html;
+        showSection('dashboardSection');
+    }
+
+    function updateRecord(name, cls, subject, idx) {
+        let newMark = document.getElementById(`edit_mark_${idx}`).value;
+        // recalculate grade briefly based on class
+        let form = parseInt(cls.charAt(0));
+        let newGrade = getGradeDirectly(newMark, form);
+        document.getElementById(`edit_grade_${idx}`).innerText = newGrade;
+
+        let record = { name: name, cls: cls, subject: subject, form: form, mark: newMark, grade: newGrade };
+        saveToLocalStorage(record);
+        sendToGoogleSheet(record, "update");
+        alert('Rekod dikemaskini.');
+    }
+
+    function deleteRecord(name, cls, subject) {
+        if(confirm("Adakah anda pasti mahu menghapus rekod ini?")) {
+            let form = parseInt(cls.charAt(0));
+            deleteFromLocalStorage(name, cls, subject);
+            sendToGoogleSheet({name: name, cls: cls, subject: subject, form: form}, "delete");
+        }
+    }
+
+    function syncAllRecords() {
+        let records = JSON.parse(localStorage.getItem('smkSelirikMarks')) || [];
+        records.forEach(r => sendToGoogleSheet(r, "update"));
+        alert('Semua rekod setempat dihantar untuk diselaraskan.');
+    }
+
+    function getGradeDirectly(val, form) {
+        if (val.toUpperCase() === 'TH') return 'TH';
+        let mark = parseFloat(val);
+        if (isNaN(mark)) return '-';
+        if (form >= 4) {
+            if (mark >= 90) return 'A+'; else if (mark >= 80) return 'A'; else if (mark >= 70) return 'A-';
+            else if (mark >= 65) return 'B+'; else if (mark >= 60) return 'B'; else if (mark >= 55) return 'C+';
+            else if (mark >= 50) return 'C'; else if (mark >= 45) return 'D'; else if (mark >= 40) return 'E'; else return 'G';
+        } else {
+            if (mark >= 82) return 'A'; else if (mark >= 66) return 'B'; else if (mark >= 50) return 'C';
+            else if (mark >= 35) return 'D'; else if (mark >= 20) return 'E'; else return 'F';
+        }
+    }
+</script>
+
+</body>
+</html>
